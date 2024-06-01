@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///trades.db'  # nebo použijte PostgreSQL
@@ -19,7 +18,9 @@ class Trade(db.Model):
     balance = db.Column(db.Float, nullable=False)
     notes = db.Column(db.String(200), nullable=True)
 
-db.create_all()
+# Vytvoření tabulky musí být uvnitř kontextu aplikace
+with app.app_context():
+    db.create_all()
 
 @app.route('/trade', methods=['POST'])
 def add_trade():
